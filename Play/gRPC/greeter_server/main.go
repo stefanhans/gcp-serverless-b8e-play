@@ -24,7 +24,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/stefanhans/"
+	pb "github.com/stefanhans/gcp-serverless-b8e-play/Play/gRPC/helloworld"
 	"google.golang.org/grpc"
 )
 
