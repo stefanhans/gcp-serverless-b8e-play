@@ -34,13 +34,19 @@ const (
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-	pb.UnimplementedGreeterServer
+	//pb.UnimplementedGreeterServer
 }
 
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Printf("Received: %v", in.GetName())
 	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+}
+
+// SayBye implements helloworld.GreeterServer
+func (s *server) SayBye(ctx context.Context, in *pb.ByeRequest) (*pb.ByeReply, error) {
+	log.Printf("Received: %v", in.GetName())
+	return &pb.ByeReply{Message: "Bye " + in.GetName()}, nil
 }
 
 func main() {
