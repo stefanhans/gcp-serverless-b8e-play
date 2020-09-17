@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package booking;
+
+// The User message containing the user's data.
+message User {
+    string name = 1;
+    int32 id = 2;
+}
+
+// The Share message containing the share's data.
+message Share {
+    string name = 1;
+    int32 id = 2;
+    enum ShareType {
+        CAR = 0;
+        BIKE = 1;
+        VAN = 2;
+    }
+    ShareType type = 3;
+}
+
+// The Booking message containing the booking's data.
+message Booking {
+    int32 id = 1;
+    User user = 2;
+    Share share = 3;
+    int64 from_unixtime = 4;
+    int64 to_unixtime = 5;
+    enum BookingStatus {
+        REQUESTED = 0;
+        CONFIRMED = 1;
+        REJECTED = 2;
+        UNKNOWN = 10;
+    }
+    BookingStatus status = 6;
+    int64 status_unixtime = 7;
+}
