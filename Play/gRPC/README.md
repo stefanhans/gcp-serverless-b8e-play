@@ -106,8 +106,10 @@ go run main.go
 
 ## Share
 
+Not yet
+
 ## Reflect
 
-
+Cloud Functions are not applicable with gRPC easily.
 
 
