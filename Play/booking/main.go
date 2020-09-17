@@ -1,32 +1,38 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
-
 	"github.com/stefanhans/gcp-serverless-b8e-play/Play/booking/types"
+	"time"
 )
 
 func main() {
 
-	user := Member{ID: 1,
+	user := types.Member{ID: 1,
 		Name: "Alice",
 	}
 
-	item := Item{ID: 1,
+	item := types.Item{ID: 1,
 		Name: "Tesla Deluxe",
-		Type: CAR,
+		Type: types.CAR,
 	}
 
-	bookingRequest := Booking{
+	bookingRequest := types.Booking{
 		ID:         1,
 		User:       user,
 		Share:      item,
 		From:       time.Now(),
 		To:         time.Now().Add(time.Hour),
-		Status:     REQUESTED,
+		Status:     types.REQUESTED,
 		StatusTime: time.Now(),
 	}
 
-	fmt.Printf("bookingRequest: %s\n", bookingRequest)
+	jsonRequest, err := json.MarshalIndent(bookingRequest, "", "    ")
+	if err != nil {
+		fmt.Printf("failed to marshall 'bookingRequest': %v\n", err)
+		return
+	}
+
+	fmt.Printf("bookingRequest: %s\n", jsonRequest)
 }
