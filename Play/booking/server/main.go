@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	http.HandleFunc("/", Book)
+	http.HandleFunc("/book", Book)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 

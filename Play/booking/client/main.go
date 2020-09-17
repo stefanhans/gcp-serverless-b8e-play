@@ -6,6 +6,7 @@ import (
 	"github.com/stefanhans/gcp-serverless-b8e-play/Play/booking/types"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -38,8 +39,17 @@ func main() {
 	}
 	//fmt.Printf("bookingRequest: %s\n", json)
 
+	//
+	serviceUrl := os.Getenv("GCP_SERVICE_URL")
+	if serviceUrl == "" {
+		fmt.Printf("GCP_SERVICE_URL environment variable unset or missing\n")
+		serviceUrl = "http://localhost:8080/book"
+	}
+
+	fmt.Printf("Use %q\n", serviceUrl)
+
 	// Send request to service
-	res, err := http.Post("http://localhost:8080/",
+	res, err := http.Post(serviceUrl,
 		"application/json",
 		strings.NewReader(fmt.Sprintf("%s", jsonRequest)))
 	if err != nil {

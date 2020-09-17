@@ -98,6 +98,12 @@ curl $(gcloud functions describe book --region europe-west1 --format='value(http
 '
 ```
 
+Edit `client/main.go` to overwrite server according to `GCP_SERVICE_URL`
+```bash
+export GCP_SERVICE_URL=$(gcloud functions describe book --region europe-west1 --format='value(httpsTrigger.url)')
+
+#export GCP_SERVICE_URL=""
+```
 
 ## Share
 
