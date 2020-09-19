@@ -1,7 +1,5 @@
-1. Use the function `play` to implement some functionality
+Edit `play.go` to implement the known functionality
 
-3. Test and play, i.e. `go build && ./<folder resp. executable>`
+`go build && ./commandline`
 
-4. Create your command and link it to your function in `commander.go` (optional)
-
-5. Edit the folder's `README.md` for an explanation
+Create new functions, one per file, and link it to your function in `commander.go`

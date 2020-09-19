@@ -1,0 +1,62 @@
+[
+  {
+    "DocId": "",
+    "Name": "Tesla Deluxe",
+    "Type": "eCar",
+    "Status": "",
+    "ParkingLot": "",
+    "GeoPoint": {
+      "latitude": 0.1,
+      "longitude": 0.1
+    },
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Tesla Deluxe",
+    "Type": "eCar",
+    "Status": "ready",
+    "ParkingLot": "my garage",
+    "GeoPoint": {
+      "latitude": 0.1,
+      "longitude": 0.1
+    },
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Tesla Deluxe",
+    "Type": "eCar",
+    "Status": "ready",
+    "ParkingLot": "my garage",
+    "GeoPoint": {
+      "latitude": 0.1,
+      "longitude": 0.1
+    },
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Tesla Deluxe",
+    "Type": "eCar",
+    "Status": "",
+    "ParkingLot": "",
+    "GeoPoint": {
+      "latitude": 0.1,
+      "longitude": 0.1
+    },
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Tesla Deluxe",
+    "Type": "eCar",
+    "Status": "ready",
+    "ParkingLot": "my garage",
+    "GeoPoint": {
+      "latitude": 0.1,
+      "longitude": 0.1
+    },
+    "Description": "just a test description"
+  }
+]

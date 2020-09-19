@@ -15,6 +15,39 @@ var (
 func commandsInit() {
 	commands = make(map[string]string)
 
+	// Commands
+	commands["connect"] = "connect  \n\t for developer playing\n"
+	commands["disconnect"] = "disconnect  \n\t for developer playing\n"
+
+	commands["setcollection"] = "setcollection  \n\t for developer playing\n"
+	commands["getcollection"] = "getcollection  \n\t for developer playing\n"
+
+	commands["delete"] = "delete  \n\t for developer playing\n"
+	commands["deleteall"] = "deleteall  \n\t for developer playing\n"
+
+	commands["addvehicle"] = "addvehicle  \n\t for developer playing\n"
+	commands["getvehicles"] = "getvehicles  \n\t for developer playing\n"
+
+	commands["storevehicles"] = "storevehicles  \n\t for developer playing\n"
+	commands["clearvehicles"] = "clearvehicles  \n\t for developer playing\n"
+
+	commands["addbooking"] = "addbooking  \n\t for developer playing\n"
+	commands["getbookings"] = "getbookings  \n\t for developer playing\n"
+
+	commands["storebookings"] = "storebookings  \n\t for developer playing\n"
+	commands["clearbookings"] = "clearbookings  \n\t for developer playing\n"
+
+	commands["querybookings"] = "querybookings  \n\t for developer playing\n"
+
+	commands["additem"] = "additem  \n\t for developer playing\n"
+	commands["getitems"] = "getitems  \n\t for developer playing\n"
+	commands["deleteallitems"] = "deleteallitems  \n\t for developer playing\n"
+
+	commands["listdocs"] = "listdocs  \n\t for developer playing\n"
+	commands["addDocument"] = "addDocument  \n\t for developer playing\n"
+	commands["getDocument"] = "getDocument  \n\t for developer playing\n"
+	commands["cloneDocument"] = "cloneDocument  \n\t for developer playing\n"
+
 	// Developer
 	commands["play"] = "play  \n\t for developer playing\n"
 
@@ -43,6 +76,84 @@ func executeCommand(commandline string) bool {
 
 		// Switch according to the first word and call appropriate function with the rest as arguments
 		switch commandFields[0] {
+
+		case "connect":
+			connect(commandFields[1:])
+			return true
+
+		case "disconnect":
+			disconnect(commandFields[1:])
+			return true
+
+		case "setcollection":
+			setcollection(commandFields[1:])
+			return true
+
+		case "getcollection":
+			getcollection(commandFields[1:])
+			return true
+
+		case "additem":
+			AddItem(commandFields[1:])
+			return true
+		case "getitems":
+			GetItems(commandFields[1:])
+			return true
+		case "deleteallitems":
+			DeleteItems(commandFields[1:])
+			return true
+
+		case "addvehicle":
+			AddVehicle(commandFields[1:])
+			return true
+		case "getvehicles":
+			GetVehicles(commandFields[1:])
+			return true
+		case "storevehicles":
+			StoreVehicles(commandFields[1:])
+			return true
+		case "clearvehicles":
+			ClearVehicles(commandFields[1:])
+			return true
+
+		case "addbooking":
+			AddBooking(commandFields[1:])
+			return true
+		case "getbookings":
+			GetBookings(commandFields[1:])
+			return true
+		case "storebookings":
+			StoreBookings(commandFields[1:])
+			return true
+		case "clearbookings":
+			ClearBookings(commandFields[1:])
+			return true
+
+		case "querybookings":
+			QueryBookings(commandFields[1:])
+			return true
+
+		case "addDocument":
+			addDocument(commandFields[1:])
+			return true
+		case "getDocument":
+			getDocument(commandFields[1:])
+			return true
+		case "cloneDocument":
+			cloneDocument(commandFields[1:])
+			return true
+
+		case "listdocs":
+			listdocs(commandFields[1:])
+			return true
+
+		case "delete":
+			delete(commandFields[1:])
+			return true
+
+		case "deleteall":
+			deleteall(commandFields[1:])
+			return true
 
 		case "quit":
 			quitCmdTool(commandFields[1:])

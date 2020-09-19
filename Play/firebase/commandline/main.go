@@ -1,12 +1,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"strings"
 	"time"
 
 	"github.com/peterh/liner"
+
+	"cloud.google.com/go/firestore"
+)
+
+var (
+	client *firestore.Client
+	ctx    context.Context
+	err    error
+
+	collection string
 )
 
 func prompt() string {
@@ -17,6 +28,9 @@ func main() {
 
 	// Initialize commands
 	commandsInit()
+
+	// Create firebase client
+	//connect([]string{})
 
 	// Start loop with history and completion
 	_ = interactiveLoop()

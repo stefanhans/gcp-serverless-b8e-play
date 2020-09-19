@@ -1,36 +1,20 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 
 	"google.golang.org/api/iterator"
-	"google.golang.org/api/option"
-
-	"cloud.google.com/go/firestore"
 )
 
 func play(arguments []string) {
 
 	_ = arguments
 
-	// [START fs_initialize]
-	// Sets your Google Cloud Platform project ID.
-	projectID := "serverless-devops-play"
-
-	// Get a Firestore client.
-	ctx := context.Background()
-
-	sa := option.WithCredentialsFile("/Users/stefan/.secret/serverless-devops-play-firestore-play.json")
-	client, err := firestore.NewClient(ctx, projectID, sa)
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
+	if client == nil {
+		fmt.Printf("not connected - use %q\n", "connect")
+		return
 	}
-
-	// Close client when done.
-	defer client.Close()
-	// [END fs_initialize]
 
 	// [START fs_add_data_1]
 	_, _, err = client.Collection("users").Add(ctx, map[string]interface{}{

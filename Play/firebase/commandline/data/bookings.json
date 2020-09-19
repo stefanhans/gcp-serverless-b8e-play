@@ -1,0 +1,74 @@
+[
+  {
+    "DocId": "",
+    "User": "Alice",
+    "Vehicle": "Tesla Deluxe",
+    "VehicleType": "eCar",
+    "VehicleStatus": "",
+    "ParkingLot": "",
+    "From": "2020-09-19T15:05:50.775102Z",
+    "To": "2020-09-19T17:05:50.775103Z",
+    "Status": "request",
+    "StatusTime": "2020-09-19T15:05:50.775103Z"
+  },
+  {
+    "DocId": "",
+    "User": "Alice",
+    "Vehicle": "Tesla Deluxe",
+    "VehicleType": "eCar",
+    "VehicleStatus": "",
+    "ParkingLot": "",
+    "From": "2020-09-19T15:05:49.376823Z",
+    "To": "2020-09-19T17:05:49.376823Z",
+    "Status": "request",
+    "StatusTime": "2020-09-19T15:05:49.376824Z"
+  },
+  {
+    "DocId": "",
+    "User": "Alice",
+    "Vehicle": "Tesla Deluxe",
+    "VehicleType": "eCar",
+    "VehicleStatus": "",
+    "ParkingLot": "",
+    "From": "2020-09-19T15:02:21.111175Z",
+    "To": "2020-09-19T17:02:21.111176Z",
+    "Status": "request",
+    "StatusTime": "2020-09-19T15:02:21.111176Z"
+  },
+  {
+    "DocId": "",
+    "User": "Alice",
+    "Vehicle": "Tesla Deluxe",
+    "VehicleType": "eCar",
+    "VehicleStatus": "",
+    "ParkingLot": "",
+    "From": "2020-09-19T15:05:50.058046Z",
+    "To": "2020-09-19T17:05:50.058046Z",
+    "Status": "request",
+    "StatusTime": "2020-09-19T15:05:50.058046Z"
+  },
+  {
+    "DocId": "",
+    "User": "Alice",
+    "Vehicle": "Tesla Deluxe",
+    "VehicleType": "eCar",
+    "VehicleStatus": "",
+    "ParkingLot": "",
+    "From": "2020-09-20T15:05:51.48244Z",
+    "To": "2020-09-20T17:05:51.48244Z",
+    "Status": "request",
+    "StatusTime": "2020-09-19T15:05:51.48244Z"
+  },
+  {
+    "DocId": "",
+    "User": "Alice",
+    "Vehicle": "Tesla Deluxe",
+    "VehicleType": "eCar",
+    "VehicleStatus": "",
+    "ParkingLot": "",
+    "From": "2020-09-19T15:05:48.212968Z",
+    "To": "2020-09-19T17:05:48.212968Z",
+    "Status": "request",
+    "StatusTime": "2020-09-19T15:05:48.212968Z"
+  }
+]

@@ -1,0 +1,144 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/stefanhans/gcp-serverless-b8e-play/Play/booking/types"
+	"log"
+	"time"
+
+	"google.golang.org/api/iterator"
+)
+
+func addDocument(arguments []string) {
+
+	_ = arguments
+
+	if client == nil {
+		fmt.Printf("not connected - use %q\n", "connect")
+		return
+	}
+
+	user := types.Member{ID: 1,
+		Name: "Alice",
+	}
+
+	item := types.Item{ID: 1,
+		Name: "Tesla Deluxe",
+		Type: types.CAR,
+	}
+
+	bookingRequest := types.Booking{
+		ID:         1,
+		User:       user,
+		Share:      item,
+		From:       time.Now(),
+		To:         time.Now().Add(time.Hour),
+		Status:     types.REQUESTED,
+		StatusTime: time.Now(),
+	}
+
+	jsonRequest, err := json.MarshalIndent(bookingRequest, "", "  ")
+	if err != nil {
+		fmt.Printf("failed to marshall 'bookingRequest': %v\n", err)
+		return
+	}
+	fmt.Printf("bookingRequest: %s\n", jsonRequest)
+
+	//var jsonMap map[string]interface{}
+	//json.Unmarshal([]byte(jsonRequest), &jsonMap)
+
+	//coronaVirusJSON := `{
+	//   "name": "xxx",
+	//   "country": 123,
+	//   "city": "Wuhan",
+	//   "reason": "Non vedge Food"
+	//}`
+
+	// Declared an empty map interface
+	var result map[string]interface{}
+
+	// Unmarshal or Decode the JSON to the interface.
+	json.Unmarshal([]byte(string(jsonRequest)), &result)
+
+	// [START fs_add_data_1]
+	_, _, err = client.Collection(collection).Add(ctx, result)
+	if err != nil {
+		log.Fatalf("Failed adding document to collection %q: %v", collection, err)
+	}
+
+	iter := client.Collection(collection).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Failed to iterate: %v", err)
+		}
+		fmt.Println(doc.Data())
+	}
+}
+
+
+
+
+
+
+
+
+
+	ref := client.Collection("users")
+	batchSize := 2
+
+	//iter := client.Collection("users").Documents(ctx)
+	//for {
+	//	doc, err := iter.Next()
+	//	if err == iterator.Done {
+	//		break
+	//	}
+	//	if err != nil {
+	//		log.Fatalf("Failed to iterate: %v", err)
+	//	}
+	//	doc.Ref.
+	//
+	//	fmt.Println(doc.Ref.ID)
+	//}
+
+
+	for {
+		// Get a batch of documents
+		iter := ref.Limit(batchSize).Documents(ctx)
+		numDeleted := 0
+
+		// Iterate through the documents, adding
+		// a delete operation for each one to a
+		// WriteBatch.
+		batch := client.Batch()
+		for {
+			doc, err := iter.Next()
+			if err == iterator.Done {
+				break
+			}
+			if err != nil {
+				fmt.Printf("failed next iteration: %v\n", err)
+				return
+			}
+
+			batch.Delete(doc.Ref)
+			numDeleted++
+		}
+
+		// If there are no documents to delete,
+		// the process is over.
+		if numDeleted == 0 {
+			fmt.Printf("no documents to delete\n")
+			return
+		}
+
+		_, err := batch.Commit(ctx)
+		if err != nil {
+			fmt.Printf("failed to commit batch for deletion: %v\n", err)
+			return
+		}
+	}
