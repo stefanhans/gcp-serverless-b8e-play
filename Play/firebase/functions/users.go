@@ -12,13 +12,7 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-var (
-	client *firestore.Client
-	ctx    context.Context
-	//err    error
-)
-
-func AddVehicle(w http.ResponseWriter, r *http.Request) {
+func AddUser(w http.ResponseWriter, r *http.Request) {
 
 	// Read the request body
 	body, err := ioutil.ReadAll(r.Body)
@@ -26,12 +20,12 @@ func AddVehicle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("AddVehicle Request: %s\n", body)
+	fmt.Printf("AddUser Request: %s\n", body)
 
 	// Unmarshal request body
 	bytes := []byte(string(body))
-	var vehicleRequest types.Vehicle
-	err = json.Unmarshal(bytes, &vehicleRequest)
+	var userRequest types.User
+	err = json.Unmarshal(bytes, &userRequest)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("cannot unmarshall JSON input: %s", err), http.StatusInternalServerError)
 		return
@@ -50,15 +44,15 @@ func AddVehicle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	doc := client.Collection("vehicles").NewDoc()
+	doc := client.Collection("users").NewDoc()
 
 	// Set the document id
-	vehicleRequest.DocId = doc.ID
+	userRequest.DocId = doc.ID
 
 	// Set the registration status
-	vehicleRequest.Status = "registered"
+	userRequest.Status = "registered"
 
-	wr, err := doc.Create(ctx, vehicleRequest)
+	wr, err := doc.Create(ctx, userRequest)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to create document: %s", err), http.StatusInternalServerError)
 		return
@@ -66,22 +60,22 @@ func AddVehicle(w http.ResponseWriter, r *http.Request) {
 	_ = wr
 	//fmt.Println(wr.UpdateTime)
 
-	// Marshal vehicle
-	jsonVehicle, err := json.Marshal(vehicleRequest)
+	// Marshal user
+	jsonUser, err := json.Marshal(userRequest)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to marshal 'vehicleRequest': %s", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("failed to marshal 'userRequest': %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("vehicleReply: %s\n", jsonVehicle)
+	fmt.Printf("userReply: %s\n", jsonUser)
 
 	// Response
-	_, err = fmt.Fprint(w, string(jsonVehicle))
+	_, err = fmt.Fprint(w, string(jsonUser))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
 	}
 }
 
-func ClearVehicles(w http.ResponseWriter, r *http.Request) {
+func ClearUsers(w http.ResponseWriter, r *http.Request) {
 
 	// Read the request body
 	body, err := ioutil.ReadAll(r.Body)
@@ -89,7 +83,7 @@ func ClearVehicles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("ClearVehicles Request: %s\n", body)
+	fmt.Printf("ClearUsers Request: %s\n", body)
 
 	// Sets your Google Cloud Platform project ID.
 	projectID := "serverless-devops-play"
@@ -104,7 +98,7 @@ func ClearVehicles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ref := client.Collection("vehicles")
+	ref := client.Collection("users")
 	batchSize := 20
 
 	for {
@@ -133,7 +127,7 @@ func ClearVehicles(w http.ResponseWriter, r *http.Request) {
 		// If there are no documents to delete,
 		// the process is over.
 		if numDeleted == 0 {
-			fmt.Printf("all %s deleted\n", "vehicles")
+			fmt.Printf("all %s deleted\n", "users")
 			return
 		}
 
@@ -146,14 +140,14 @@ func ClearVehicles(w http.ResponseWriter, r *http.Request) {
 		//fmt.Printf("Commit Result: %v\n", result)
 
 		// Response
-		_, err = fmt.Fprintf(w, "{%q: %q}", "result", "cleared")
+		_, err = fmt.Fprint(w, "{%q: %q}", "result", "cleared")
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
 		}
 	}
 }
 
-func GetVehicles(w http.ResponseWriter, r *http.Request) {
+func GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	// Read the request body
 	body, err := ioutil.ReadAll(r.Body)
@@ -161,7 +155,7 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("ClearVehicles Request: %s\n", body)
+	fmt.Printf("ClearUsers Request: %s\n", body)
 
 	// Sets your Google Cloud Platform project ID.
 	projectID := "serverless-devops-play"
@@ -176,9 +170,9 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vehicles := make([]types.Vehicle, 0)
+	users := make([]types.User, 0)
 
-	iter := client.Collection("vehicles").Documents(ctx)
+	iter := client.Collection("users").Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -190,30 +184,30 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(doc.Data())
 
-		var data types.Vehicle
+		var data types.User
 		if err := doc.DataTo(&data); err != nil {
 			http.Error(w, fmt.Sprintf("failed to convert data: %s", err), http.StatusInternalServerError)
 			return
 		}
-		vehicles = append(vehicles, data)
+		users = append(users, data)
 	}
-	fmt.Printf("vehicles: \n%v\n", vehicles)
+	fmt.Printf("users: \n%v\n", users)
 
-	jsonVehicles, err := json.MarshalIndent(vehicles, "", "    ")
+	jsonUsers, err := json.MarshalIndent(users, "", "    ")
 	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to marshal data 'jsonVehicles': %s", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("failed to marshal data 'jsonUsers': %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("vehicleRequest: %s\n", jsonVehicles)
+	fmt.Printf("userRequest: %s\n", jsonUsers)
 
 	// Response
-	_, err = fmt.Fprint(w, string(jsonVehicles))
+	_, err = fmt.Fprint(w, string(jsonUsers))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
 	}
 }
 
-//func StoreVehicles(arguments []string) {
+//func StoreUsers(arguments []string) {
 //
 //	_ = arguments
 //
@@ -222,31 +216,31 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 //		return
 //	}
 //
-//	jsonVehicles, err := ioutil.ReadFile("data/vehicles.json")
+//	jsonUsers, err := ioutil.ReadFile("data/users.json")
 //	if err != nil {
-//		fmt.Printf("could not read file %q: %v\n", "data/vehicles.json", err)
+//		fmt.Printf("could not read file %q: %v\n", "data/users.json", err)
 //		return
 //	}
 //
-//	fmt.Printf(string(jsonVehicles))
+//	fmt.Printf(string(jsonUsers))
 //
 //	// Declared an empty map interface
-//	var vehicles []types.Vehicle
+//	var users []types.User
 //
 //	// Unmarshal or Decode the JSON to the interface.
-//	err = json.Unmarshal([]byte(jsonVehicles), &vehicles)
+//	err = json.Unmarshal([]byte(jsonUsers), &users)
 //	if err != nil {
-//		fmt.Printf("failed to unmarshal 'vehicles': %v\n", err)
+//		fmt.Printf("failed to unmarshal 'users': %v\n", err)
 //	}
 //
-//	fmt.Printf("vehicles: %v\n", vehicles)
+//	fmt.Printf("users: %v\n", users)
 //
-//	for i, vehicle := range vehicles {
+//	for i, user := range users {
 //
-//		doc := client.Collection("vehicles").NewDoc()
-//		vehicle.DocId = doc.ID
+//		doc := client.Collection("users").NewDoc()
+//		user.DocId = doc.ID
 //
-//		wr, err := doc.Create(ctx, vehicle)
+//		wr, err := doc.Create(ctx, user)
 //		if err != nil {
 //			fmt.Printf("failed to create document #%v: %v\n", i, err)
 //		}
