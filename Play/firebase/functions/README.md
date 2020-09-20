@@ -150,10 +150,12 @@ gcloud functions deploy add-booking --region europe-west3 \
 curl $(gcloud functions describe add-booking --region europe-west3 --format='value(httpsTrigger.url)') \
     -d '{
             "DocId": "",
-            "Name": "Alice",
-            "Type": "Testuser",
-            "Status": "",
-            "Description": "just a test description"
+            "User": "Alice",
+            "Vehicle": "mycar",
+            "VehicleType": "my type",
+            "VehicleStatus": "",
+            "ParkingLot": "",
+            "Status": ""
           }
 '
 ``` 
@@ -183,11 +185,25 @@ go mod vendor
 
 ```bash
 gcloud functions deploy get-bookings --region europe-west3 \
-    --entry-point GetVehicles --runtime go113 --trigger-http \
+    --entry-point GetBookings --runtime go113 --trigger-http \
     --service-account=firestore-play@serverless-devops-play.iam.gserviceaccount.com \
     --allow-unauthenticated 
 ```
    
 ```bash
-curl $(gcloud functions describe get-vehicles --region europe-west3 --format='value(httpsTrigger.url)')
+curl $(gcloud functions describe get-bookings --region europe-west3 --format='value(httpsTrigger.url)')
 ``` 
+
+
+
+curl $(gcloud functions describe add-vehicle --region europe-west3 --format='value(httpsTrigger.url)') \
+    -d '{
+            "Name": "Tesla Deluxe",
+            "Type": "eCar",
+            "GeoPoint": {
+              "latitude": 0.1,
+              "longitude": 0.1
+            },
+            "Description": "just a test description"
+          }
+'
