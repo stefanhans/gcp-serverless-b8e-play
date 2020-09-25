@@ -22,6 +22,9 @@ func commandsInit() {
 	commands["setcollection"] = "setcollection  \n\t for developer playing\n"
 	commands["getcollection"] = "getcollection  \n\t for developer playing\n"
 
+	// getmasterdata
+	commands["getmasterdata"] = "getmasterdata  \n\t get all master data, i.e. users, vehicles, and the current bookings\n"
+
 	commands["delete"] = "delete  \n\t for developer playing\n"
 	commands["deleteall"] = "deleteall  \n\t for developer playing\n"
 
@@ -91,6 +94,11 @@ func executeCommand(commandline string) bool {
 
 		case "getcollection":
 			getcollection(commandFields[1:])
+			return true
+
+			// MasterData
+		case "getmasterdata":
+			GetMasterData(commandFields[1:])
 			return true
 
 		case "additem":

@@ -27,3 +27,21 @@ type Vehicle struct {
 	GeoPoint    *latlng.LatLng `firestore:"geopoint"`
 	Description string         `firestore:"description"`
 }
+
+type User struct {
+	DocId       string `firestore:"doc-id"`
+	Name        string `firestore:"name"`
+	Type        string `firestore:"type"`
+	Status      string `firestore:"status"`
+	Description string `firestore:"description"`
+}
+
+type MasterData struct {
+	Users      []User    `firestore:"users"`
+	Vehicles   []Vehicle `firestore:"vehicles"`
+	Bookings   []Booking `firestore:"bookings"`
+	From       time.Time `firestore:"from"`
+	To         time.Time `firestore:"to"`
+	Status     string    `firestore:"status"`
+	StatusTime time.Time `firestore:"status-time"`
+}
