@@ -1,0 +1,30 @@
+[
+  {
+    "DocId": "",
+    "Name": "Alice",
+    "Type": "Testuser",
+    "Status": "registered",
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Bob",
+    "Type": "Testuser",
+    "Status": "registered",
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Charly",
+    "Type": "Testuser",
+    "Status": "registered",
+    "Description": "just a test description"
+  },
+  {
+    "DocId": "",
+    "Name": "Dick",
+    "Type": "Testuser",
+    "Status": "registered",
+    "Description": "just a test description"
+  }
+]

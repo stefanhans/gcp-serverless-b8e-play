@@ -194,6 +194,23 @@ gcloud functions deploy get-bookings --region europe-west3 \
 curl $(gcloud functions describe get-bookings --region europe-west3 --format='value(httpsTrigger.url)')
 ``` 
 
+##### GetMasterData
+```bash
+GO111MODULE=on
+go mod vendor
+```
+
+```bash
+gcloud functions deploy get-master-data --region europe-west3 \
+    --entry-point GetMasterData --runtime go113 --trigger-http \
+    --service-account=firestore-play@serverless-devops-play.iam.gserviceaccount.com \
+    --allow-unauthenticated 
+```
+   
+```bash
+curl $(gcloud functions describe get-master-data --region europe-west3 --format='value(httpsTrigger.url)') -d '{}'
+``` 
+
 
 
 curl $(gcloud functions describe add-vehicle --region europe-west3 --format='value(httpsTrigger.url)') \
