@@ -151,7 +151,10 @@ func GetMasterData(w http.ResponseWriter, r *http.Request) {
 
 	masterDataString := fmt.Sprintf("{ %s,\n%s,\n%s, \n%q: %q, \n%q: %q, \n%q: %q, \n%q: %q }",
 		usersString, vehiclesString, bookingsString,
-		"From", time.Now(), "To", time.Now(), "Status", "no-cache", "StatusTime", time.Now())
+		"From", time.Now().Format(time.RFC3339),
+		"To", time.Now().Format(time.RFC3339),
+		"Status", "no-cache", "StatusTime",
+		time.Now().Format(time.RFC3339))
 
 	// Response
 	_, err = fmt.Fprintf(w, "{ \n%q: %s }\n", "MasterData", masterDataString)
