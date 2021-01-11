@@ -1,0 +1,124 @@
+{
+  "rules": [{
+    "function": "myfunction",
+    "arguments": [{
+      "rule": {
+        "Content": 0,
+        "Mask": 255
+      }
+    },
+      {
+        "Content": 0,
+        "Mask": 255
+      }
+    ],
+    "hhh": []
+  },
+    {
+      "function": "myfunction",
+      "arguments": [
+        "myfunction",
+        "myfunction1"
+      ]
+    }
+  ],
+  "binary_tree": [{
+    "0": {
+      "node": {
+        "Content": 0,
+        "Mask": 0
+      }
+    },
+    "255": {
+      "Content": 0,
+      "Mask": 255
+    }
+  }],
+
+  "users": {
+    "__comment__": "list of users from 0 to 255",
+
+    "type": "list",
+    "values": [{
+      "0": {
+        "DocId": "list_0",
+        "Name": "Alice",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Alice"
+      },
+      "1": {
+        "DocId": "list_1",
+        "Name": "Bob",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Bob"
+      },
+      "2": {
+        "DocId": "list_2",
+        "Name": "Charly",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Charly"
+      }
+    }]
+  },
+
+  "vehicles": {
+    "__comment__": "list of vehicles from 0 to 255",
+
+    "type": "list",
+    "values": [{
+      "0": {
+        "DocId": "list_0",
+        "Name": "Alice",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Alice"
+      },
+      "1": {
+        "DocId": "list_1",
+        "Name": "Bob",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Bob"
+      },
+      "2": {
+        "DocId": "list_2",
+        "Name": "Charly",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Charly"
+      }
+    }]
+  },
+
+  "bookings": {
+    "__comment__": "range of bookings in 15-min-tree from 0 to 65535 (uint16)",
+
+    "type": "range",
+    "values": [{
+      "0": {
+        "DocId": "list_0",
+        "Name": "Alice",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Alice"
+      },
+      "1": {
+        "DocId": "list_1",
+        "Name": "Bob",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Bob"
+      },
+      "2": {
+        "DocId": "list_2",
+        "Name": "Charly",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Charly"
+      }
+    }]
+  }
+}

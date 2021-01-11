@@ -35,6 +35,46 @@ func AddUser(arguments []string) {
 	fmt.Println(wr.UpdateTime)
 }
 
+func GetUser(arguments []string) {
+
+	if len(arguments) == 0 {
+		fmt.Printf("argument 'doc-id' missing\n")
+		return
+	}
+	docId := arguments[0]
+
+	if client == nil {
+		fmt.Printf("not connected - use %q\n", "connect")
+		return
+	}
+
+	collection = "users"
+
+	q := client.Collection(collection).
+		Where("doc-id", "==", docId).
+		Limit(1)
+	iter := q.Documents(ctx)
+
+	doc, err := iter.Next()
+	if err != nil {
+		log.Fatalf("Failed to iterate: %v", err)
+	}
+	fmt.Println(doc.Data())
+
+	var user types.User
+	if err := doc.DataTo(&user); err != nil {
+		fmt.Printf("failed to convert user: %v\n", err)
+	}
+	fmt.Printf("user: \n%v\n", user)
+
+	jsonUsers, err := json.MarshalIndent(user, "", "    ")
+	if err != nil {
+		fmt.Printf("failed to marshall 'userRequest': %v\n", err)
+		return
+	}
+	fmt.Printf("userRequest: %s\n", jsonUsers)
+}
+
 func StoreUsers(arguments []string) {
 
 	_ = arguments

@@ -50,21 +50,161 @@ func AddVehicle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	doc := client.Collection("vehicles").NewDoc()
+	// Todo: Check for conflicts, e.g. same name
 
-	// Set the document id
-	vehicleRequest.DocId = doc.ID
+	// Check for predefined vehicle resp. document id
+	if vehicleRequest.DocId == "" {
 
-	// Set the registration status
-	vehicleRequest.Status = "registered"
+		doc := client.Collection("vehicles").NewDoc()
 
-	wr, err := doc.Create(ctx, vehicleRequest)
+		// Set the document id
+		vehicleRequest.DocId = doc.ID
+
+		// Set the registration status
+		vehicleRequest.Status = "registered"
+
+		wr, err := doc.Create(ctx, vehicleRequest)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to create document: %s", err), http.StatusInternalServerError)
+			return
+		}
+		_ = wr
+		//fmt.Println(wr.UpdateTime)
+
+	} else {
+
+		doc := client.Doc("vehicles/" + vehicleRequest.DocId)
+		writeResult, err := doc.Create(ctx, vehicleRequest)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to create vehicles/%s: %s", vehicleRequest.DocId, err), http.StatusInternalServerError)
+			return
+		}
+		_ = writeResult
+
+	}
+
+	// Marshal vehicle
+	jsonVehicle, err := json.Marshal(vehicleRequest)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to create document: %s", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("failed to marshal 'vehicleRequest': %s", err), http.StatusInternalServerError)
 		return
 	}
-	_ = wr
-	//fmt.Println(wr.UpdateTime)
+	fmt.Printf("vehicleReply: %s\n", jsonVehicle)
+
+	// Response
+	_, err = fmt.Fprint(w, string(jsonVehicle))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
+	}
+}
+
+func GetVehicleById(w http.ResponseWriter, r *http.Request) {
+
+	// Read the request body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("GetVehicleById Request: %s\n", body)
+
+	// Unmarshal request body
+	bytes := []byte(string(body))
+	var vehicleRequest types.Vehicle
+	err = json.Unmarshal(bytes, &vehicleRequest)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("cannot unmarshall JSON input: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Sets your Google Cloud Platform project ID.
+	projectID := "serverless-devops-play"
+
+	// Get a Firestore client.
+	ctx = context.Background()
+
+	//sa := option.WithCredentialsFile("/Users/stefan/.secret/serverless-devops-play-firestore-play.json")
+	client, err = firestore.NewClient(ctx, projectID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to create client: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// "49KvH6m2Y7flEegBdPv4"
+	q := client.Collection("vehicles").
+		Where("DocId", "==", vehicleRequest.DocId).
+		Limit(1)
+	iter := q.Documents(ctx)
+
+	doc, err := iter.Next()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("no document found: %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(doc.Data())
+	vehicle := doc.Data()
+
+	fmt.Printf("vehicle: \n%v\n", vehicle)
+
+	jsonVehicle, err := json.MarshalIndent(vehicle, "", "    ")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to marshal data 'jsonVehicle': %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("jsonVehicle: %s\n", jsonVehicle)
+
+	// Response
+	_, err = fmt.Fprint(w, string(jsonVehicle))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
+	}
+}
+
+func DeleteVehicleById(w http.ResponseWriter, r *http.Request) {
+
+	// Read the request body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("DeleteVehicleById Request: %s\n", body)
+
+	// Unmarshal request body
+	bytes := []byte(string(body))
+	var vehicleRequest types.Vehicle
+	err = json.Unmarshal(bytes, &vehicleRequest)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("cannot unmarshall JSON input: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Sets your Google Cloud Platform project ID.
+	projectID := "serverless-devops-play"
+
+	// Get a Firestore client.
+	ctx = context.Background()
+
+	//sa := option.WithCredentialsFile("/Users/stefan/.secret/serverless-devops-play-firestore-play.json")
+	client, err = firestore.NewClient(ctx, projectID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to create client: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	deleteResult, err := client.Batch().
+		Delete(client.Doc("vehicles/"+vehicleRequest.DocId), firestore.Exists).
+		Commit(ctx)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to delete vehicle %q: %s", vehicleRequest.DocId, err), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Printf("C: \n%v\n", deleteResult)
+	vehicleRequest.Description = "deleteResult: \n"
+	for i, s := range deleteResult {
+		vehicleRequest.Description += fmt.Sprintf("%v: %q\n", i, s)
+	}
 
 	// Marshal vehicle
 	jsonVehicle, err := json.Marshal(vehicleRequest)
@@ -161,7 +301,7 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("ClearVehicles Request: %s\n", body)
+	fmt.Printf("GetVehicles Request: %s\n", body)
 
 	// Sets your Google Cloud Platform project ID.
 	projectID := "serverless-devops-play"
@@ -199,7 +339,7 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("vehicles: \n%v\n", vehicles)
 
-	jsonVehicles, err := json.MarshalIndent(vehicles, "", "    ")
+	jsonVehicles, err := json.MarshalIndent(vehicles, "    ", "    ")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to marshal data 'jsonVehicles': %s", err), http.StatusInternalServerError)
 		return
@@ -207,7 +347,7 @@ func GetVehicles(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("vehicleRequest: %s\n", jsonVehicles)
 
 	// Response
-	_, err = fmt.Fprint(w, string(jsonVehicles))
+	_, err = fmt.Fprintf(w, "{ \n    %q: %s\n}\n", "Vehicles", string(jsonVehicles))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
 	}

@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"strconv"
 
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
@@ -39,23 +40,23 @@ func main() {
 
 	collection := "context"
 
-	//cxt := []byte{1,1,1}
-	////data := []byte{0}
-	//
-	//fmt.Printf("%q\n", cxt)
-	//fmt.Printf("%v\n", len(cxt))
-	//
-	//doc := client.Collection(collection).NewDoc()
-	//
-	//_, err = doc.Create(ctx, Contexting{
-	//	DocId:       doc.ID,
-	//	Cxt:        base64.StdEncoding.EncodeToString(cxt),
-	//})
-	//if err != nil {
-	//	fmt.Printf("failed to create document: %v\n", err)
-	//}
+	cxt := []byte{1, 1, 1}
+	//data := []byte{0}
 
-	bytesFilter := []byte{1, 1, 0}
+	fmt.Printf("%q\n", cxt)
+	fmt.Printf("%v\n", len(cxt))
+
+	doc := client.Collection(collection).NewDoc()
+
+	_, err = doc.Create(ctx, Contexting{
+		DocId: doc.ID,
+		Cxt:   base64.StdEncoding.EncodeToString(cxt),
+	})
+	if err != nil {
+		fmt.Printf("failed to create document: %v\n", err)
+	}
+
+	bytesFilter := []byte{1, 1, 1}
 
 	var bytesCxt []byte
 	_ = bytesCxt
@@ -69,7 +70,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to iterate: %v", err)
 		}
-		fmt.Printf("%v\n", doc.Data())
+		fmt.Printf("doc.Data: %v\n", doc.Data())
 		var data Contexting
 		if err := doc.DataTo(&data); err != nil {
 			fmt.Printf("failed to convert data: %v\n", err)
@@ -105,6 +106,9 @@ func main() {
 	fmt.Printf("CI_BRICK_RZV.Content: %q\n", CI_BRICK_RZV.Content)
 	fmt.Printf("CI_BRICK_RZV.Mask: %q\n", CI_BRICK_RZV.Mask)
 
+	fmt.Printf("%-16s: %08b\n", "Content", CI_BRICK_RZV.Content)
+	fmt.Printf("%-16s: %08b\n", "Mask", CI_BRICK_RZV.Mask)
+
 	ciRequest := CiBrick{
 		Content: 2,
 		Mask:    0,
@@ -113,4 +117,35 @@ func main() {
 	fmt.Printf("ciRequest: %q\n", ciRequest)
 	fmt.Printf("ciRequest.Content: %q\n", ciRequest.Content)
 	fmt.Printf("ciRequest.Mask: %q\n", ciRequest.Mask)
+
+	fmt.Printf("%-16s: %08b\n", "Content", ciRequest.Content)
+	fmt.Printf("%-16s: %08b\n", "Mask", ciRequest.Mask)
+
+	binary := "1011111111000010001101011100000"
+	b, err := strconv.ParseInt(binary, 2, 64)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("b: %08b\n", b)
+	fmt.Printf("b: %v\n", b)
+
+	from := "1011111111000000000000000000000"
+	b, err = strconv.ParseInt(from, 2, 64)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("from: %08b\n", b)
+	fmt.Printf("from: %v\n", b)
+
+	to := "1011111111000011111111111111111"
+	b, err = strconv.ParseInt(to, 2, 64)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("to: %08b\n", b)
+	fmt.Printf("to: %v\n", b)
 }

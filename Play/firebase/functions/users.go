@@ -44,21 +44,159 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	doc := client.Collection("users").NewDoc()
+	// Check for predefined user resp. document id
+	if userRequest.DocId == "" {
 
-	// Set the document id
-	userRequest.DocId = doc.ID
+		doc := client.Collection("users").NewDoc()
 
-	// Set the registration status
-	userRequest.Status = "registered"
+		// Set the document id
+		userRequest.DocId = doc.ID
 
-	wr, err := doc.Create(ctx, userRequest)
+		// Set the registration status
+		userRequest.Status = "registered"
+
+		wr, err := doc.Create(ctx, userRequest)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to create document: %s", err), http.StatusInternalServerError)
+			return
+		}
+		_ = wr
+		//fmt.Println(wr.UpdateTime)
+
+	} else {
+
+		doc := client.Doc("users/" + userRequest.DocId)
+		writeResult, err := doc.Create(ctx, userRequest)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("failed to create users/%s: %s", userRequest.DocId, err), http.StatusInternalServerError)
+			return
+		}
+		_ = writeResult
+
+	}
+
+	// Marshal user
+	jsonUser, err := json.Marshal(userRequest)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to create document: %s", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("failed to marshal 'userRequest': %s", err), http.StatusInternalServerError)
 		return
 	}
-	_ = wr
-	//fmt.Println(wr.UpdateTime)
+	fmt.Printf("userReply: %s\n", jsonUser)
+
+	// Response
+	_, err = fmt.Fprint(w, string(jsonUser))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
+	}
+}
+
+func GetUserById(w http.ResponseWriter, r *http.Request) {
+
+	// Read the request body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("GetUserById Request: %s\n", body)
+
+	// Unmarshal request body
+	bytes := []byte(string(body))
+	var userRequest types.User
+	err = json.Unmarshal(bytes, &userRequest)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("cannot unmarshall JSON input: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Sets your Google Cloud Platform project ID.
+	projectID := "serverless-devops-play"
+
+	// Get a Firestore client.
+	ctx = context.Background()
+
+	//sa := option.WithCredentialsFile("/Users/stefan/.secret/serverless-devops-play-firestore-play.json")
+	client, err = firestore.NewClient(ctx, projectID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to create client: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// "49KvH6m2Y7flEegBdPv4"
+	q := client.Collection("users").
+		Where("DocId", "==", userRequest.DocId).
+		Limit(1)
+	iter := q.Documents(ctx)
+
+	doc, err := iter.Next()
+	if err != nil {
+		http.Error(w, fmt.Sprintf("no document found: %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(doc.Data())
+	user := doc.Data()
+
+	fmt.Printf("user: \n%v\n", user)
+
+	jsonUser, err := json.MarshalIndent(user, "", "    ")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to marshal data 'jsonUser': %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("userRequest: %s\n", jsonUser)
+
+	// Response
+	_, err = fmt.Fprint(w, string(jsonUser))
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
+	}
+}
+
+func DeleteUserById(w http.ResponseWriter, r *http.Request) {
+
+	// Read the request body
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("DeleteUserById Request: %s\n", body)
+
+	// Unmarshal request body
+	bytes := []byte(string(body))
+	var userRequest types.User
+	err = json.Unmarshal(bytes, &userRequest)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("cannot unmarshall JSON input: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Sets your Google Cloud Platform project ID.
+	projectID := "serverless-devops-play"
+
+	// Get a Firestore client.
+	ctx = context.Background()
+
+	//sa := option.WithCredentialsFile("/Users/stefan/.secret/serverless-devops-play-firestore-play.json")
+	client, err = firestore.NewClient(ctx, projectID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to create client: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	deleteResult, err := client.Batch().
+		Delete(client.Doc("users/"+userRequest.DocId), firestore.Exists).
+		Commit(ctx)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("failed to delete user %q: %s", userRequest.DocId, err), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Printf("C: \n%v\n", deleteResult)
+	userRequest.Description = "deleteResult: \n"
+	for i, s := range deleteResult {
+		userRequest.Description += fmt.Sprintf("%v: %q\n", i, s)
+	}
 
 	// Marshal user
 	jsonUser, err := json.Marshal(userRequest)
@@ -140,7 +278,7 @@ func ClearUsers(w http.ResponseWriter, r *http.Request) {
 		//fmt.Printf("Commit Result: %v\n", result)
 
 		// Response
-		_, err = fmt.Fprint(w, "{%q: %q}", "result", "cleared")
+		_, err = fmt.Fprintf(w, "{%q: %q}", "result", "cleared")
 		if err != nil {
 			http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
 		}
@@ -155,7 +293,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("failed to read request: %s", err), http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("ClearUsers Request: %s\n", body)
+	fmt.Printf("GetUsers Request: %s\n", body)
 
 	// Sets your Google Cloud Platform project ID.
 	projectID := "serverless-devops-play"
@@ -193,7 +331,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("users: \n%v\n", users)
 
-	jsonUsers, err := json.MarshalIndent(users, "", "    ")
+	jsonUsers, err := json.MarshalIndent(users, "    ", "    ")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to marshal data 'jsonUsers': %s", err), http.StatusInternalServerError)
 		return
@@ -201,49 +339,8 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("userRequest: %s\n", jsonUsers)
 
 	// Response
-	_, err = fmt.Fprint(w, string(jsonUsers))
+	_, err = fmt.Fprintf(w, "{ \n    %q: %s\n}\n", "Users", string(jsonUsers))
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to write response: %s", err), http.StatusInternalServerError)
 	}
 }
-
-//func StoreUsers(arguments []string) {
-//
-//	_ = arguments
-//
-//	if client == nil {
-//		fmt.Printf("not connected - use %q\n", "connect")
-//		return
-//	}
-//
-//	jsonUsers, err := ioutil.ReadFile("data/users.json")
-//	if err != nil {
-//		fmt.Printf("could not read file %q: %v\n", "data/users.json", err)
-//		return
-//	}
-//
-//	fmt.Printf(string(jsonUsers))
-//
-//	// Declared an empty map interface
-//	var users []types.User
-//
-//	// Unmarshal or Decode the JSON to the interface.
-//	err = json.Unmarshal([]byte(jsonUsers), &users)
-//	if err != nil {
-//		fmt.Printf("failed to unmarshal 'users': %v\n", err)
-//	}
-//
-//	fmt.Printf("users: %v\n", users)
-//
-//	for i, user := range users {
-//
-//		doc := client.Collection("users").NewDoc()
-//		user.DocId = doc.ID
-//
-//		wr, err := doc.Create(ctx, user)
-//		if err != nil {
-//			fmt.Printf("failed to create document #%v: %v\n", i, err)
-//		}
-//		fmt.Println(wr.UpdateTime)
-//	}
-//}

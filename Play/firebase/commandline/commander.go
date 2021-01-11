@@ -35,8 +35,9 @@ func commandsInit() {
 	commands["clearvehicles"] = "clearvehicles  \n\t for developer playing\n"
 
 	commands["adduser"] = "adduser  \n\t for developer playing\n"
-	commands["getusers"] = "getusers  \n\t for developer playing\n"
+	commands["getuser"] = "getuser  \n\t for developer playing\n"
 
+	commands["getusers"] = "getusers  \n\t for developer playing\n"
 	commands["storeusers"] = "storeusers  \n\t for developer playing\n"
 	commands["clearusers"] = "clearusers  \n\t for developer playing\n"
 
@@ -132,6 +133,9 @@ func executeCommand(commandline string) bool {
 
 		case "adduser":
 			AddUser(commandFields[1:])
+			return true
+		case "getuser":
+			GetUser(commandFields[1:])
 			return true
 		case "getusers":
 			GetUsers(commandFields[1:])

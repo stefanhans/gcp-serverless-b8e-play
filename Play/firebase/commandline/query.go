@@ -20,7 +20,7 @@ func QueryBookings(arguments []string) {
 
 	collection = "bookings"
 	from := time.Date(2020, time.September, 20, 0, 0, 0, 0, time.UTC)
-	to := time.Date(2020, time.September, 21, 23, 0, 0, 0, time.UTC)
+	to := time.Date(2020, time.December, 21, 23, 0, 0, 0, time.UTC)
 
 	query := client.Collection(collection).
 		Where("from", ">=", from)

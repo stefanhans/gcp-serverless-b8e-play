@@ -1,0 +1,96 @@
+{
+  "users": {
+    "__comment__": ["list of users from 0 to 255",
+      "from 0 to 255 (uint8)",
+      ""
+    ],
+
+    "type": "list",
+    "base": "uint8",
+    "values": [{
+      "0": {
+        "DocId": "0",
+        "Name": "Alice",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Alice"
+      },
+      "1": {
+        "DocId": "1",
+        "Name": "Bob",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Bob"
+      },
+      "2": {
+        "DocId": "2",
+        "Name": "Charly",
+        "Status": "registered",
+        "Type": "Testuser",
+        "Description": "Testuser Charly"
+      }
+    }]
+  },
+
+  "vehicles": {
+    "__comment__": ["list of vehicles from 0 to 255",
+      "from 0 to 255 (uint8)",
+      ""
+    ],
+
+    "type": "list",
+    "base": "uint8",
+    "values": [{
+      "0": {
+        "DocId": "0",
+        "Name": "Tesla Deluxe",
+        "Status": "registered",
+        "Type": "eCar"
+      },
+      "1": {
+        "DocId": "1",
+        "Name": "Tesla Standard",
+        "Status": "registered",
+        "Type": "eCar"
+      }
+    }]
+  },
+
+  "bookings": {
+    "__comment__": ["range of bookings in 15-min-resolution ",
+      "from 0 to 65535 (uint16)",
+      "only registered bookings",
+      "needs function to convert Unix time to range number (uint16)"
+    ],
+
+    "type": "range",
+    "base": "uint16",
+    "values": [{
+      "__comment__": "the key resp. the DocId correlates with the 'From' as a range number, i.e. a leaf of binary tree",
+
+      "0": {
+        "DocId": "0",
+        "From": 0,
+        "To": 5,
+        "__comment__": "user and vehicle using its DocId",
+
+        "User": 1,
+        "Vehicle": 2
+      },
+      "1": {
+        "DocId": "1",
+        "From": 1,
+        "To": 4,
+        "User": 2,
+        "Vehicle": 1
+      },
+      "2": {
+        "DocId": "2",
+        "From": 2,
+        "To": 4,
+        "User": 0,
+        "Vehicle": 1
+      }
+    }]
+  }
+}
